@@ -51,32 +51,42 @@ public class Scanner {
     }
 }
 
-/*
-Signos o símbolos del lenguaje:
-(
-)
-{
-}
-,
-.
-;
--
-+
-*
-/
-!
-!=
-=
-==
-<
-<=
->
->=
-// -> comentarios (no se genera token)
-/* ... * / -> comentarios (no se genera token)
-Identificador,
-Cadena
-Numero
-Cada palabra reservada tiene su nombre de token
+private void scanToken() {
+    char c = advance();
+    switch (c) {
+        case '(': agregarToken(TipoToken.PARENTESIS_IZQ); break;
+        case ')': agregarToken(TipoToken.PARENTESIS_DER); break;
+        case '{': agregarToken(TipoToken.LLAVE_IZQ); break;
+        case '}': agregarToken(TipoToken.LLAVE_DER); break;
+        case ',': agregarToken(TipoToken.COMA); break;
+        case '.': agregarToken(TipoToken.PUNTO); break;
+        case '-': agregarToken(TipoToken.MENOS); break;
+        case '+': agregarToken(TipoToken.MAS); break;
+        case ';': agregarToken(TipoToken.PUNTO_COMA); break;
+        case '*': agregarToken(TipoToken.ASTERISCO); break;
+        case '!': agregarToken(igual('=') ? TipoToken.DIFERENTE_QUE : TipoToken.EXCLAMACION); break;
+        case '=': agregarToken(igual('=') ? TipoToken.IGUAL_QUE : TipoToken.IGUAL); break;
+        case '<': agregarToken(igual('=') ? TipoToken.MENOR_IGUAL : TipoToken.MENOR); break;
+        case '>': agregarToken(igual('=') ? TipoToken.MAYOR_IGUAL : TipoToken.MAYOR); break;
+        case '/':
+            if (igual('/')) {
+                // Comentario de una sola línea, avanzamos hasta el final de la línea
+                while (peek() != '\n' && !isAtEnd()) advance();
+            } else if (igual('*')) {
+                // Comentario de múltiples líneas, avanzamos hasta encontrar el cierre
+                boolean commentClosed = false;
+                while (!commentClosed && !isAtEnd()) {
+                    if (igual('*') && igual('/')) {
+                        commentClosed = true;
+                    } else {
+                        advance();
+                    }
+                }
 
- */
+                if (!commentClosed) {
+                    error(linea, "Comentario de múltiples líneas sin cierre");
+                }
+            } else {
+                agregarToken(TipoToken.SLASH);
+            }
+            break;
