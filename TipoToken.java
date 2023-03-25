@@ -7,7 +7,7 @@ public enum TipoToken {
 
 
     // Palabras clave:
-    Y, CLASE,
+    Y, CLASE, ADEMAS, FALSO, PARA, FUN, SI, NULO, O, IMPRIMIR, RETORNAR, SUPER, ESTE, VERDADERO, VAR, MIENTRAS,
 
     // Final de cadena
     EOF

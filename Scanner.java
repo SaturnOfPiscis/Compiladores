@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mx.ipn.escom.compiladores.TipoToken;
+
 public class Scanner {
 
     private final String source;
@@ -18,20 +20,20 @@ public class Scanner {
         palabrasReservadas = new HashMap<>();
         palabrasReservadas.put("y", TipoToken.Y);
         palabrasReservadas.put("clase", TipoToken.CLASE);
-        /*palabrasReservadas.put("ademas", );
-        palabrasReservadas.put("falso", );
-        palabrasReservadas.put("para", );
-        palabrasReservadas.put("fun", ); //definir funciones
-        palabrasReservadas.put("si", );
-        palabrasReservadas.put("nulo", );
-        palabrasReservadas.put("o", );
-        palabrasReservadas.put("imprimir", );
-        palabrasReservadas.put("retornar", );
-        palabrasReservadas.put("super", );
-        palabrasReservadas.put("este", );
-        palabrasReservadas.put("verdadero", );
-        palabrasReservadas.put("var", ); //definir variables
-        palabrasReservadas.put("mientras", );*/
+        palabrasReservadas.put("ademas", TipoToken.ADEMAS);
+        palabrasReservadas.put("falso", TipoToken.FALSO);
+        palabrasReservadas.put("para", TipoToken.PARA );
+        palabrasReservadas.put("fun", TipoToken.FUN); //definir funciones
+        palabrasReservadas.put("si", TipoToken.SI);
+        palabrasReservadas.put("nulo", TipoToken.NULO);
+        palabrasReservadas.put("o", TipoToken.O);
+        palabrasReservadas.put("imprimir", TipoToken.IMPRIMIR);
+        palabrasReservadas.put("retornar", TipoToken.RETORNAR);
+        palabrasReservadas.put("super", TipoToken.SUPER);
+        palabrasReservadas.put("este", TipoToken.ESTE);
+        palabrasReservadas.put("verdadero", TipoToken.VERDADERO);
+        palabrasReservadas.put("var", TipoToken.VAR); //definir variables
+        palabrasReservadas.put("mientras", TipoToken.MIENTRAS);
     }
 
     Scanner(String source){
