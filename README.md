@@ -1,2 +1,0 @@
-# Compiladores
-ESCOM COMPILADORES PLAN 2020
