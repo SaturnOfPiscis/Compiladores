@@ -71,11 +71,11 @@ private void scanToken() {
         case '/':
             if (igual('/')) {
                 // Comentario de una sola línea, avanzamos hasta el final de la línea
-                while (peek() != '\n' && !isAtEnd()) advance();
+                while (peek() != '\n' && !EOF()) advance();
             } else if (igual('*')) {
                 // Comentario de múltiples líneas, avanzamos hasta encontrar el cierre
                 boolean commentClosed = false;
-                while (!commentClosed && !isAtEnd()) {
+                while (!commentClosed && !EOF()) {
                     if (igual('*') && igual('/')) {
                         commentClosed = true;
                     } else {
@@ -90,3 +90,31 @@ private void scanToken() {
                 agregarToken(TipoToken.SLASH);
             }
             break;
+        case ' ':
+        case '\r':
+        case '\t':
+            // Ignoramos los espacios en blanco y los caracteres de control
+            break;
+
+        case '\n':
+            // Incrementamos el número de línea
+            linea++;
+            break;
+
+        default:
+            if (isDigit(c)) {
+                // Analizamos un número
+                scanNumero();
+            } else if (isAlpha(c)) {
+                // Analizamos un identificador o palabra reservada
+                scanIdentificador();
+            } else {
+                error(linea, "Caracter inesperado: " + c);
+            }
+            break;
+    }
+}
+
+private void agregarToken(TipoToken tipo) {
+    agregarToken(tipo, null);
+}
