@@ -12,6 +12,8 @@ public class Scanner {
     private final List<Token> tokens = new ArrayList<>();
 
     private int linea = 1;
+    private int inicioToken = 0;
+    private int current = 0;    
 
     private static final Map<String, TipoToken> palabrasReservadas;
     static {
@@ -39,17 +41,11 @@ public class Scanner {
     }
 
     List<Token> scanTokens(){
-        //Aquí va el corazón del scanner.
 
-        /*
-        Analizar el texto de entrada para extraer todos los tokens
-        y al final agregar el token de fin de archivo
-         */
         tokens.add(new Token(TipoToken.EOF, "", null, linea));
 
         return tokens;
     }
-}
 
 private void scanToken() {
     char c = advance();
@@ -161,4 +157,31 @@ private boolean isAlpha(char c) {
 
 private boolean isAlphaNumeric(char c) {
      return isAlpha(c) || isDigit(c);
+}
+
+private void scanNumero() {
+    while (isDigit(peek())) advance();
+
+    if (peek() == '.' && isDigit(peekNext())) {
+        advance();
+
+        while (isDigit(peek())) advance();
+    }
+    String lexema = source.substring(inicioToken, current);
+    double valor = Double.parseDouble(lexema);
+    agregarToken(TipoToken.NUMERO, valor);
+}
+
+private void scanIdentificador() {
+    while (isAlphaNumeric(peek())) advance();
+
+    String lexema = source.substring(inicioToken, current);
+    TipoToken tipo = palabrasReservadas.getOrDefault(lexema, TipoToken.IDENTIFICADOR);
+    agregarToken(tipo);
+}
+
+private void error(int linea, String mensaje) {
+    System.err.println("[Error en línea " + linea + "] " + mensaje);
+}
+
 }
