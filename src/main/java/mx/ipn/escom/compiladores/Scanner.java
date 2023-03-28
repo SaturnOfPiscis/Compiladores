@@ -184,4 +184,23 @@ private void error(int linea, String mensaje) {
     System.err.println("[Error en línea " + linea + "] " + mensaje);
 }
 
+public class TestScanner {
+
+    public static void main(String[] args) {
+        String input = "var x = 5;\n" +
+                       "if (x > 3) {\n" +
+                       "    imprimir(\"x es mayor que 3\");\n" +
+                       "} else {\n" +
+                       "    imprimir(\"x es menor o igual que 3\");\n" +
+                       "}";
+        
+        Scanner scanner = new Scanner(input);
+        List<Token> tokens = scanner.scanTokens();
+        
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
+    }
+}
+
 }
