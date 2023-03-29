@@ -13,7 +13,7 @@ public class Scanner {
 
     private int linea = 1;
     private int inicioToken = 0;
-    private int current = 0;    
+    private int current = 0;
 
     private static final Map<String, TipoToken> palabrasReservadas;
     static {
@@ -36,80 +36,112 @@ public class Scanner {
         palabrasReservadas.put("mientras", TipoToken.MIENTRAS);
     }
 
-    Scanner(String source){
+    public Scanner(String source) {
         this.source = source;
     }
 
-    List<Token> scanTokens(){
+    public List<Token> scanTokens() {
+        while (!EOF()) {
+            inicioToken = current;
+            scanToken();
+        }
 
         tokens.add(new Token(TipoToken.EOF, "", null, linea));
-
         return tokens;
     }
 
-private void scanToken() {
-    char c = advance();
-    switch (c) {
-        case '(': agregarToken(TipoToken.PARENTESIS_IZQ); break;
-        case ')': agregarToken(TipoToken.PARENTESIS_DER); break;
-        case '{': agregarToken(TipoToken.LLAVE_IZQ); break;
-        case '}': agregarToken(TipoToken.LLAVE_DER); break;
-        case ',': agregarToken(TipoToken.COMA); break;
-        case '.': agregarToken(TipoToken.PUNTO); break;
-        case '-': agregarToken(TipoToken.MENOS); break;
-        case '+': agregarToken(TipoToken.MAS); break;
-        case ';': agregarToken(TipoToken.PUNTO_COMA); break;
-        case '*': agregarToken(TipoToken.ASTERISCO); break;
-        case '!': agregarToken(igual('=') ? TipoToken.DIFERENTE_QUE : TipoToken.EXCLAMACION); break;
-        case '=': agregarToken(igual('=') ? TipoToken.IGUAL_QUE : TipoToken.IGUAL); break;
-        case '<': agregarToken(igual('=') ? TipoToken.MENOR_IGUAL : TipoToken.MENOR); break;
-        case '>': agregarToken(igual('=') ? TipoToken.MAYOR_IGUAL : TipoToken.MAYOR); break;
-        case '/':
-            if (igual('/')) {
-                // Comentario de una sola línea, avanzamos hasta el final de la línea
-                while (peek() != '\n' && !EOF()) advance();
-            } else if (igual('*')) {
-                // Comentario de múltiples líneas, avanzamos hasta encontrar el cierre
-                boolean commentClosed = false;
-                while (!commentClosed && !EOF()) {
-                    if (igual('*') && igual('/')) {
-                        commentClosed = true;
-                    } else {
-                        advance();
+    private void scanToken() {
+        char c = advance();
+        switch (c) {
+            case '(':
+                agregarToken(TipoToken.PARENTESIS_IZQ);
+                break;
+            case ')':
+                agregarToken(TipoToken.PARENTESIS_DER);
+                break;
+            case '{':
+                agregarToken(TipoToken.LLAVE_IZQ);
+                break;
+            case '}':
+                agregarToken(TipoToken.LLAVE_DER);
+                break;
+            case ',':
+                agregarToken(TipoToken.COMA);
+                break;
+            case '.':
+                agregarToken(TipoToken.PUNTO);
+                break;
+            case '-':
+                agregarToken(TipoToken.MENOS);
+                break;
+            case '+':
+                agregarToken(TipoToken.MAS);
+                break;
+            case ';':
+                agregarToken(TipoToken.PUNTO_COMA);
+                break;
+            case '*':
+                agregarToken(TipoToken.ASTERISCO);
+                break;
+            case '!':
+                agregarToken(igual('=') ? TipoToken.DIFERENTE_QUE : TipoToken.EXCLAMACION);
+                break;
+            case '=':
+                agregarToken(igual('=') ? TipoToken.IGUAL_QUE : TipoToken.IGUAL);
+                break;
+            case '<':
+                agregarToken(igual('=') ? TipoToken.MENOR_IGUAL : TipoToken.MENOR);
+                break;
+            case '>':
+                agregarToken(igual('=') ? TipoToken.MAYOR_IGUAL : TipoToken.MAYOR);
+                break;
+            case '/':
+                if (igual('/')) {
+                    // Comentario de una sola línea, avanzamos hasta el final de la línea
+                    while (peek() != '\n' && !EOF()) {
+                    advance();
                     }
-                }
-
+                } else if (igual('*')) {
+                    // Comentario de múltiples líneas, avanzamos hasta encontrar el cierre
+                    boolean commentClosed = false;
+                    while (!commentClosed && !EOF()) {
+                        if (igual('*') && igual('/')) {
+                            commentClosed = true;
+                        } else {
+                        advance();
+                        }
+                    }
                 if (!commentClosed) {
                     error(linea, "Comentario de múltiples líneas sin cierre");
                 }
-            } else {
+                } else {
                 agregarToken(TipoToken.SLASH);
-            }
-            break;
-        case ' ':
-        case '\r':
-        case '\t':
+                }
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
             // Ignoramos los espacios en blanco y los caracteres de control
             break;
 
-        case '\n':
+            case '\n':
             // Incrementamos el número de línea
             linea++;
             break;
 
-        default:
-            if (isDigit(c)) {
-                // Analizamos un número
-                scanNumero();
-            } else if (isAlpha(c)) {
-                // Analizamos un identificador o palabra reservada
-                scanIdentificador();
-            } else {
-                error(linea, "Caracter inesperado: " + c);
-            }
-            break;
+            default:
+                if (isDigit(c)) {
+                    // Analizamos un número
+                    scanNumero();
+                } else if (isAlpha(c)) {
+                    // Analizamos un identificador o palabra reservada
+                    scanIdentificador();
+                } else {
+                    error(linea, "Caracter inesperado: " + c);
+                }
+                break;
+        }
     }
-}
 
 private void agregarToken(TipoToken tipo) {
     agregarToken(tipo, null);
@@ -130,42 +162,54 @@ private char advance() {
 }
 
 private boolean igual(char expected) {
-     if (EOF()) return false;
-     if (source.charAt(current) != expected) return false;
+    if (EOF()) {
+        return false;
+    }
+    if (source.charAt(current) != expected) {
+        return false;
+    }
 
-     current++;
-     return true;
+    current++;
+    return true;
 }
 
 private char peek() {
-     if (EOF()) return '\0';
-     return source.charAt(current);
+    if (EOF()) {
+        return '\0';
+    }
+    return source.charAt(current);
 }
 
 private char peekNext() {
-     if (current + 1 >= source.length()) return '\0';
-     return source.charAt(current + 1);
+    if (current + 1 >= source.length()) {
+        return '\0';
+    }
+    return source.charAt(current + 1);
 }
 
 private boolean isDigit(char c) {
-     return c >= '0' && c <= '9';
+    return c >= '0' && c <= '9';
 }
 
 private boolean isAlpha(char c) {
-     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 }
 
 private boolean isAlphaNumeric(char c) {
-     return isAlpha(c) || isDigit(c);
+    return isAlpha(c) || isDigit(c);
 }
 
 private void scanNumero() {
-    while (isDigit(peek())) advance();
+    while (isDigit(peek())) {
+        advance();
+    }
 
     if (peek() == '.' && isDigit(peekNext())) {
         advance();
 
-        while (isDigit(peek())) advance();
+        while (isDigit(peek())) {
+            advance();
+        }
     }
     String lexema = source.substring(inicioToken, current);
     double valor = Double.parseDouble(lexema);
@@ -183,24 +227,4 @@ private void scanIdentificador() {
 private void error(int linea, String mensaje) {
     System.err.println("[Error en línea " + linea + "] " + mensaje);
 }
-
-public class TestScanner {
-
-    public static void main(String[] args) {
-        String input = "var x = 5;\n" +
-                       "if (x > 3) {\n" +
-                       "    imprimir(\"x es mayor que 3\");\n" +
-                       "} else {\n" +
-                       "    imprimir(\"x es menor o igual que 3\");\n" +
-                       "}";
-        
-        Scanner scanner = new Scanner(input);
-        List<Token> tokens = scanner.scanTokens();
-        
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
-    }
-}
-
 }
